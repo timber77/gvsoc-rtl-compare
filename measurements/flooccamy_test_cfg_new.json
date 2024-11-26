@@ -1,0 +1,14 @@
+{
+  "simulators": ["gvsoc", "rtl"],
+  "experiments": [
+    {
+      "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD",
+      "direction": ["read"],
+      "num_trans": [1],
+      "num_iters": 5,
+      "trans_size": [1]
+    }
+  ]
+}
+
+
