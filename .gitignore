@@ -1,1 +1,7 @@
 *__pycache__*
+plots/*
+*.ini
+*.svg
+*.pdf
+*.code-workspace
+*.out

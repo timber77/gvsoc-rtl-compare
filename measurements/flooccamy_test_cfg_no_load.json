@@ -3,11 +3,19 @@
     {
       "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD",
       "direction": ["read"],
+      "num_trans": [1,5],
+      "num_iters": 12,
+      "trans_size": [1, 4096, 16384, 65536]
+    },
+    {
+      "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD",
+      "direction": ["read"],
       "num_trans": [75],
       "num_iters": 12,
       "trans_size": [32768]
     }
   ]
 }
+
 
 

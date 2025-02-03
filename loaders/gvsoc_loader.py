@@ -16,17 +16,20 @@ def read_gvsoc_insn_trace(trace_file) -> pd.DataFrame:
     df = pd.DataFrame(row_dicts)
     return df
 
-def compute_cycles(df, clusters_to_ignore, iteration):
+def compute_cycles(df, clusters_to_ignore, iterations):
     row_dicts = []
     df = df.loc[df['function'] == 'snrt_mcycle:21']
-    for i in range(16):
-        if i in clusters_to_ignore:
-            row_dicts.append(dict(cluster_id=i, cycles=0))
+    for cluster_id in range(16):
+        if cluster_id in clusters_to_ignore:
+            row_dicts.append(dict(cluster_id=cluster_id, cycles=0))
         else:
-            df_cluster = df[df.path.str.contains(f'cluster_{i}/')]
-            i = get_mcycle_section_idx(iteration)
-            cycles = (df_cluster.iloc[i+1]['cycle'] - df_cluster.cycle.iloc[i])
-            row_dicts.append(dict(cluster_id=i, cycles=cycles))
+            cycles = 0
+            for iteration in iterations:
+                df_cluster = df[df.path.str.contains(f'cluster_{cluster_id}/')]
+                j = get_mcycle_section_idx(iteration)
+                cycles += (df_cluster.iloc[j+1]['cycle'] - df_cluster.cycle.iloc[j])
+            cycles = round(cycles/len(iterations))
+            row_dicts.append(dict(cluster_id=cluster_id, cycles=cycles))
     return pd.DataFrame(row_dicts)
 
 def cycles_dmcpyi_to_mcycles(df, clusters_to_ignore, iteration):
@@ -52,4 +55,7 @@ def compute_cycles_dmcpyi_to_mcycles(df, clusters_to_ignore, iteration):
     return pd.DataFrame(row_dicts)
 
 def get_structured_data(gvsoc_logs_folder, clusters_to_ignore, params):
+    pass
+
+def get_cycles_per_dmcpyi():
     pass

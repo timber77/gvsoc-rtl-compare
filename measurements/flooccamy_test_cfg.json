@@ -1,26 +1,18 @@
 {
-  "simulators": ["gvsoc", "rtl"],
   "experiments": [
-    {
-      "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD",
-      "direction": ["read"],
-      "num_trans": [1],
-      "num_iters": 5,
-      "trans_size": [1, 128, 4096, 16384, 65536]
-    },
-    {
-      "benchmark": "PATTERN_X_LOOPS",
-      "direction": ["read"],
-      "num_trans": [1],
-      "num_iters": 5,
-      "trans_size": [1, 128, 4096, 16384, 65536]
-    },
     {
       "benchmark": "PATTERN_ALL_FROM_1_FULL_LOAD",
       "direction": ["read"],
-      "num_trans": [1],
-      "num_iters": 5,
-      "trans_size": [1, 128, 4096, 16384, 65536]
+      "num_trans": [1,5],
+      "num_iters": 12,
+      "trans_size": [1, 4096, 16384, 65536]
+    },
+    {
+      "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD",
+      "direction": ["read"],
+      "num_trans": [1,5],
+      "num_iters": 12,
+      "trans_size": [1, 4096, 16384, 65536]
     }
   ]
 }

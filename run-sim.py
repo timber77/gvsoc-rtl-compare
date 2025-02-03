@@ -4,15 +4,18 @@ import subprocess
 import argparse
 import json5
 import os
+import time
 
 FLOOCCAMY_DIR = Path("/home/sem24h19/flooccamy")
 GVSOC_DIR = Path("/home/sem24h19/example_floonoc_gvsoc")
 
-RTL_LOGS_DIR = Path("/scratch/sem24h19/measurements/rtl")
-GVSOC_LOGS_DIR = Path("/scratch/sem24h19/measurements/gvsoc")
+# RTL_LOGS_DIR = Path("/scratch/sem24h19/measurements/rtl")
+RTL_LOGS_DIR = Path("/scratch2/sem24h19/measurements/rtl")
+GVSOC_LOGS_DIR = Path("/scratch2/sem24h19/measurements/gvsoc")
 
 
 BINARY = FLOOCCAMY_DIR / "sw/build/rtl/intercluster_bench.elf"
+#BINARY = FLOOCCAMY_DIR / "sw/build/rtl/sanity.elf"
 CFG_H = FLOOCCAMY_DIR / "sw/src/config.h"
 
 
@@ -56,12 +59,17 @@ def rtl_run_sim(logs_dir: Path):
 def gvsoc_run_sim(logs_dir: Path):
     """Run the gvsoc simulation."""
     logging.info("Running gvsoc simulation in %s", logs_dir)
+    start_time = time.time()
     subprocess.run(
         f"mkdir -p {logs_dir} && cd {logs_dir.parent} && make -C {GVSOC_DIR} LOGDIR={logs_dir} WORKDIR={logs_dir} BINARY={BINARY} run", # TODO Check
         shell=True,
         check=True,
         # env=set_gvsoc_env(),
     )
+    end_time = time.time()
+    with open(logs_dir / "time.log", "w") as f:
+        f.write(f"Simulation time in seconds: {end_time - start_time}")
+        print(f"Simulation time in seconds: {end_time - start_time}")
 
 
 def rtl_gen_traces(logs_dir: Path):
@@ -85,7 +93,7 @@ def clean_up(logs_dir: Path):
             os.remove(logs_dir.parent / file)
 
 
-def run_sweep(cfg: dict):
+def run_sweep(cfg: dict, simulators: list):
     """Run a sweep of measurements."""
     for exp in cfg["experiments"]:
         for direction in exp["direction"]:
@@ -108,7 +116,7 @@ def run_sweep(cfg: dict):
                     write_cfg_h(CFG_H, params)
                     build_sw()  
 
-                    for simulator in cfg["simulators"]:
+                    for simulator in simulators:
                         match simulator:
                             case "rtl":
                                 logs_dir = logs_dir_path(RTL_LOGS_DIR, **params)
@@ -140,6 +148,15 @@ def main():
         help="Configuration file",
         required=True
     )
+    parser.add_argument(
+        "-s",
+        "--simulator",
+        type=str,
+        action="append",
+        help="Simulator to run",
+        choices=["rtl", "gvsoc"],
+        required=True,
+    )
 
     args = parser.parse_args()
     f = open(args.cfg, "r")
@@ -149,8 +166,8 @@ def main():
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(message)s")
-
-    run_sweep(cfg)
+    
+    run_sweep(cfg, args.simulator)
 
 
 if __name__ == "__main__":

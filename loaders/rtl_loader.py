@@ -7,7 +7,7 @@ from typing import List
 def get_mcycle_section_idx(iteration):
     return 1 + (iteration-1) * 2
 
-def read_rtl_perf_trace(perf_folder, clusters_to_ignore:List, iteration) -> pd.DataFrame:
+def read_rtl_perf_trace(perf_folder, clusters_to_ignore:List, iterations) -> pd.DataFrame:
     dm_cores_hartid = [9*id + 8 for id in range(16)]
     dm_cores_hartid_hex = [hex(id)[2:] for id in dm_cores_hartid]
     perf_files = [f'{perf_folder}/hart_{id.zfill(5)}_perf.json' for id in dm_cores_hartid_hex]
@@ -21,7 +21,11 @@ def read_rtl_perf_trace(perf_folder, clusters_to_ignore:List, iteration) -> pd.D
                 row_dicts.append(dict(cluster_id=dm_cores_hartid[i], cycles=0))
             else:
                 perf_data = json.load(json_file)
-                row_dicts.append(dict(cluster_id=dm_cores_hartid[i], cycles=perf_data[get_mcycle_section_idx(iteration)]['cycles']))
+                cycles = 0
+                for iteration in iterations:
+                    cycles += perf_data[get_mcycle_section_idx(iteration)]['cycles']
+                cycles=round(cycles/len(iterations))
+                row_dicts.append(dict(cluster_id=dm_cores_hartid[i], cycles=cycles))
 
     df = pd.DataFrame(row_dicts)
 

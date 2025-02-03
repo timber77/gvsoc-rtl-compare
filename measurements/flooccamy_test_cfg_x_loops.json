@@ -1,0 +1,12 @@
+{
+    "experiments": [
+      {
+        "benchmark": "PATTERN_X_LOOPS",
+        "direction": ["read"],
+        "num_trans": [1],
+        "num_iters": 12,
+        "trans_size": [1, 4096, 16384]
+      }
+    ]
+  }
+  

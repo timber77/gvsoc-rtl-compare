@@ -1,0 +1,22 @@
+{
+    "experiments": [
+      {
+        "benchmark": "PATTERN_ALL_FROM_1_NO_LOAD_NARROW",
+        "direction": ["read"],
+        "num_trans": [1,5],
+        "num_iters": 12,
+        "trans_size": [1]
+      },
+      {
+        "benchmark": "PATTERN_ALL_FROM_1_FULL_LOAD_NARROW",
+        "direction": ["read"],
+        "num_trans": [1,5],
+        "num_iters": 12,
+        "trans_size": [1]
+      }
+    ]
+  }
+  
+  
+  
+  
